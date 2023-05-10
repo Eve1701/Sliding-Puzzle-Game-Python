@@ -1,0 +1,342 @@
+"""
+Sliding Puzzle Game
+Assignment 1
+Semester 1, 2021
+CSSE1001/CSSE7030
+"""
+
+from a1_support import *
+
+
+# Replace these <strings> with your name, student number and email address.
+__author__ = "Eve Gath, 46966168"
+__email__ = "s4696616@student.uq.edu.au"
+
+
+def shuffle_puzzle(solution: str) -> str:
+    """
+    Shuffle a puzzle solution to produce a solvable sliding puzzle.
+
+    Parameters:
+        solution (str): a solution to be converted into a shuffled puzzle.
+
+    Returns:
+        (str): a solvable shuffled game with an empty tile at the
+               bottom right corner.
+
+    References:
+        - https://en.wikipedia.org/wiki/15_puzzle#Solvability
+        - https://www.youtube.com/watch?v=YI1WqYKHi78&ab_channel=Numberphile
+
+    Note: This function uses the swap_position function that you have to
+          implement on your own. Use this function when the swap_position
+          function is ready
+    """
+    shuffled_solution = solution[:-1]
+
+    # Do more shuffling for bigger puzzles.
+    swaps = len(solution) * 2
+    for _ in range(swaps):
+        # Pick two indices in the puzzle randomly.
+        index1, index2 = random.sample(range(len(shuffled_solution)), k=2)
+        shuffled_solution = swap_position(shuffled_solution, index1, index2)
+
+    return shuffled_solution + EMPTY
+
+
+# Write your functions here
+def print_grid(puzzle: str):
+    """ The print_grid function makes a grid of the input. 
+
+        Parameters:
+        puzzle (str): the input to be printed (solution or puzzle)
+
+        Returns:
+        None
+       
+    """
+    length = len(puzzle)
+    grid_size = int((length)**(1/2))
+    section = [CORNER,HORIZONTAL_WALL,HORIZONTAL_WALL,HORIZONTAL_WALL]
+    border = ''.join(section)
+    border_section = ""
+    tiles = 0
+
+    while tiles < length:
+        #determining the necessary amount of tiles.
+        for index in range (0, grid_size):
+            border_section = grid_size * border
+        border_section += CORNER
+        print(border_section)
+    
+        for char in puzzle[tiles: (tiles + grid_size)]:
+            #printing each character of the puzzle in a tile.
+            print(VERTICAL_WALL, char, end=" ")
+        print(VERTICAL_WALL)
+        tiles += grid_size
+
+    for index in range (0, grid_size):
+        #adding the bottom border of the grid. 
+        border_section = grid_size * border
+    border_section += CORNER
+    print(border_section)
+
+    
+    
+    
+        
+            
+        
+def swap_position(puzzle: str, from_index: int, to_index: int) -> str:
+
+    """ The swap_position function is used to change the puzzle to a list, and index the list
+
+        Parameters:
+        puzzle (str): the string of the game puzzle.
+        from_index (int): the index of the character selected to be swapped
+        to_index (int): the index of the character swapping with the selected character
+
+        Returns:
+        puzzle (str): the updated puzzle with swapped positions of characters
+        
+    """
+    
+    puzzle_list = []
+    puzzle_list[:0] = puzzle
+    #establishing puzzle_list as a list of the characters of the puzzle
+    puzzle_list[from_index], puzzle_list[to_index] = puzzle_list[to_index], puzzle_list[from_index]
+    #swapping the index positions of the characters.
+    puzzle = ''.join(puzzle_list)
+
+    return puzzle
+    
+def check_win(puzzle: str, solution: str) -> bool:
+
+    """ The check_win function determines whether the puzzle has been solved.
+
+        Parameters:
+        puzzle (str): the string of the game puzzle
+        solution (str): the string of the solution with the extra character instead of empty
+
+        Returns:
+        True
+        False
+
+    """
+    index = puzzle.index(EMPTY)
+
+    
+    new_solution = solution[:index] + ' ' + solution[index+1:]
+
+    if new_solution == puzzle:
+        return True
+    else:
+        return False
+
+    """determining if the space is in the correct value missing and returning true or false."""
+
+def board_size(grid_size: str):
+    """ The board_size function checks the validity of the difficulty entered.
+        Determines whether the grid_size will allow the print_grid function to work.
+
+        Parameters:
+        grid_size (str): the grid_size is referred to as a string until it is found as an integer.
+
+        Returns:
+        grid_size (int): the grid size to be used in print_grid()
+
+    """
+    
+    if grid_size.isnumeric():
+        #determining whether the grid_size is a number
+        grid_size = int(grid_size)
+        
+        if grid_size not in range(2, 15):
+             print(INVALID_MESSAGE)
+             grid_size = input(BOARD_SIZE_PROMPT)
+             
+    else:
+        print(INVALID_MESSAGE)
+        grid_size = input(BOARD_SIZE_PROMPT)
+    
+    return grid_size
+
+def display(puzzle: str, solution: str):
+    """ The display function is used to continually display the solution and changed grid until the puzzle is solved.
+
+        Parameters:
+        puzzle (str): the puzzle changed by the move function
+
+        solution (str): the solution to the changing game puzzle.
+
+        Returns:
+        None
+
+    """        
+    print("Solution:")
+    print_grid(solution)
+    
+    print("\nCurrent position:")
+    print_grid(puzzle)
+    print("")
+    return
+
+        
+    """ Displaying the solution and the puzzle next to eachother."""
+    
+
+
+
+def move(puzzle: str, direction: str) -> str:
+
+    """
+        The move function creates a list of the puzzle, in order to properly index and swap positions of the empty space. 
+
+        Parameters:
+        puzzle (str): a puzzle to be changed into a list to move the index of empty
+
+        solution (str): the solution to the puzzle, displayed in a grid.
+        
+
+        Returns:
+        puzzle (str) : the updated game puzzle with moved empty space
+        
+    """
+
+    
+    grid_size = int(len(puzzle)**(1/2))
+    puzzle_list = []
+    puzzle_list[:0]= puzzle
+    index_empty = puzzle_list.index(EMPTY)
+    
+
+
+
+    if direction == LEFT:
+        if index_empty % grid_size == 0:
+            #determining whether on the far left of the grid.
+            return None
+                
+        else:
+            puzzle_list = swap_position(puzzle_list, index_empty - 1, index_empty)
+            puzzle = "".join(puzzle_list) #changes the function back into a string, so that it can be printed in the grid.
+            
+
+    elif direction == RIGHT: 
+        if index_empty % grid_size == grid_size - 1:
+            #determining whether on the far right of the grid.
+            return None
+                 
+        else:
+            puzzle_list = swap_position(puzzle_list, index_empty + 1, index_empty)
+            puzzle = "".join(puzzle_list) #changes the function back into a string, so that it can be printed in the grid.
+
+    elif direction == UP: 
+        if index_empty < grid_size:
+            #determining whether in the top row of the grid
+            return None
+
+        else:
+            puzzle_list = swap_position(puzzle_list, index_empty, index_empty - grid_size)
+            puzzle = "".join(puzzle_list) #changes the function back into a string, so that it can be printed in the grid.
+
+
+    elif direction == DOWN:
+        if index_empty >= len(puzzle) - grid_size:
+            #determining whether in the bottom row of the grid
+            return None
+
+        else:
+            puzzle_list = swap_position(puzzle_list, index_empty + grid_size, index_empty)
+            puzzle = "".join(puzzle_list) #changes the function back into a string, so that it can be printed in the grid.
+    return puzzle
+
+
+def main():
+    """Entry point to gameplay"""
+
+    print(WELCOME_MESSAGE)
+    
+    while True:
+        grid_size = board_size(input(BOARD_SIZE_PROMPT))
+    
+        solution = get_game_solution('words.txt', grid_size)
+        puzzle = solution
+        puzzle = shuffle_puzzle(puzzle)
+
+        #establishing a puzzle and solution
+    
+        while check_win(puzzle, solution) == False:
+            #if it is not an instant win, continuing on with the puzzle
+            display(puzzle, solution)
+            direction = input(DIRECTION_PROMPT)
+
+            if direction == GIVE_UP:
+                #if giving up, determining whether they would like to play again or quit
+                print(GIVE_UP_MESSAGE)
+                decision = input(PLAY_AGAIN_PROMPT)
+                
+                if decision == "Y" or decision == "y":
+                    #resetting if wanting to play again
+                    grid_size = board_size(input(BOARD_SIZE_PROMPT))
+    
+                    solution = get_game_solution('words.txt', grid_size)
+                    puzzle = solution
+                    puzzle = shuffle_puzzle(puzzle)
+                    continue
+
+                elif decision == "N" or decision == "n":
+                    #breaking the code if quitting
+                    print(BYE)
+                    return
+
+                else:
+                    print(INVALID_MESSAGE)
+                    continue
+            
+            elif direction != HELP and direction != UP and direction != DOWN and direction != LEFT and direction != RIGHT:   
+                #determining if the direction of the move is valid
+                print(INVALID_MESSAGE)        
+                continue
+            
+            elif direction == HELP:
+                print(HELP_MESSAGE)
+                continue             
+
+            else:
+                #calling the move function if direction is valid
+                puzzle_check = move(puzzle, direction) 
+                if puzzle_check == None:
+                    print(INVALID_MOVE_FORMAT.format(direction))
+                else:
+                    puzzle = move(puzzle, direction)
+                    
+            
+                
+        if check_win(puzzle, solution) == True:
+            #asking if they would like to play again if game won
+            display(puzzle, solution)        
+            print(WIN_MESSAGE)
+            
+            decision = input(PLAY_AGAIN_PROMPT)
+            if decision == "Y" or decision == "y":
+                continue
+
+            elif decision == "N" or decision == "n":
+                print(BYE)
+                return
+
+            else:
+                print(INVALID_MESSAGE)
+                decision = input(PLAY_AGAIN_PROMPT)
+                
+        
+
+
+    
+    
+
+
+
+if __name__ == "__main__":
+    main()
