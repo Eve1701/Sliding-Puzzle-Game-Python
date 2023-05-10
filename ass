@@ -8,9 +8,8 @@ CSSE1001/CSSE7030
 from a1_support import *
 
 
-# Replace these <strings> with your name, student number and email address.
-__author__ = "Eve Gath, 46966168"
-__email__ = "s4696616@student.uq.edu.au"
+# Replace these <strings> with your name
+__author__ = "Eve"
 
 
 def shuffle_puzzle(solution: str) -> str:
